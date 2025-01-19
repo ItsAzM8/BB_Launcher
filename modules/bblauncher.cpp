@@ -24,24 +24,6 @@ std::string game_serial = "";
 BBLauncher::BBLauncher(bool noGUI, QWidget* parent)
     : QMainWindow(parent), noGUIset(noGUI), ui(new Ui::BBLauncher) {
 
-    toml::value data;
-    try {
-        std::ifstream ifs;
-        ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        ifs.open(SettingsFile, std::ios_base::binary);
-        data = toml::parse(SettingsFile);
-    } catch (std::exception& ex) {
-        QMessageBox::critical(NULL, "Filesystem error", ex.what());
-        return;
-    }
-
-    shadPs4Executable = QString::fromStdString(
-        toml::find_or<std::string>(data, "Launcher", "shadPath", ""));
-
-    if (shadPs4Executable == "") {
-        GetShadExecutable();
-    }
-
     ui->setupUi(this);
 
     this->setFixedSize(this->width(), this->height());
@@ -119,6 +101,24 @@ BBLauncher::BBLauncher(bool noGUI, QWidget* parent)
 
     if (noGUI)
         LaunchButton_isPressed(noGUI);
+
+        toml::value data;
+    try {
+        std::ifstream ifs;
+        ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        ifs.open(SettingsFile, std::ios_base::binary);
+        data = toml::parse(SettingsFile);
+    } catch (std::exception& ex) {
+        QMessageBox::critical(NULL, "Filesystem error", ex.what());
+        return;
+    }
+
+    shadPs4Executable = QString::fromStdString(
+        toml::find_or<std::string>(data, "Launcher", "shadPath", ""));
+
+    if (shadPs4Executable == "") {
+        GetShadExecutable();
+    }
 }
 
 void BBLauncher::ExeSelectButton_isPressed() {

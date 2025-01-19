@@ -343,10 +343,13 @@ void ShadSettings::UpdateShad() {
         }
     }
 
+
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
 
     connect(reply, &QNetworkReply::finished, this, [this, reply, updateChannel]() {
+        QMessageBox::warning(this, "", reply->errorString());
+
         if (reply->error() != QNetworkReply::NoError) {
             QMessageBox::warning(this, "Error",
                                  QString::fromStdString("Network error:") + "\n" +
@@ -359,6 +362,7 @@ void ShadSettings::UpdateShad() {
         }
 
         QByteArray response = reply->readAll();
+
         QJsonDocument jsonDoc(QJsonDocument::fromJson(response));
 
         if (jsonDoc.isNull()) {
@@ -436,12 +440,14 @@ void ShadSettings::UpdateShad() {
             ui->buttonBox->setEnabled(true);
             return;
         }
-
+        QMessageBox::warning(this, "fuckn hey", "yoyo");
         DownloadUpdate(downloadUrl);
+        QMessageBox::warning(this, "fuckn hey", "yoyoyoyo");
     });
 }
 
 void ShadSettings::DownloadUpdate(const QString& downloadUrl) {
+
     QNetworkAccessManager* networkManager = new QNetworkAccessManager(this);
     QNetworkRequest request(downloadUrl);
     QNetworkReply* reply = networkManager->get(request);
@@ -454,18 +460,26 @@ void ShadSettings::DownloadUpdate(const QString& downloadUrl) {
                 }
             });
 
+    connect(reply, &QNetworkReply::errorOccurred, this,  [this, reply, downloadUrl]() {
+        QString errmsg = ("balls\n" + downloadUrl + "\n" + reply->errorString());
+    });
+
     connect(reply, &QNetworkReply::finished, this, [this, reply, downloadUrl]() {
         if (reply->error() != QNetworkReply::NoError) {
             QString errmsg = ("Network error occurred while trying to access the URL:\n" +
                               downloadUrl + "\n" + reply->errorString());
-            QMessageBox::warning(this, "Error", errmsg);
+            QMessageBox::warning(this, "fuckn hey", errmsg);
             reply->deleteLater();
             ui->checkUpdateButton->setText("Update ShadPS4");
             ui->checkUpdateButton->setEnabled(true);
             return;
         }
 
+        QMessageBox::warning(this, "fuckn hey", ":))");
+
         QString userPath = QString::fromStdString(GetShadUserDir().string());
+
+        QMessageBox::warning(this, "fuckn hey", ":)))");
 
 #ifdef Q_OS_WIN
         QString tempDownloadPath =

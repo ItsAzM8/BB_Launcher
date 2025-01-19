@@ -101,7 +101,9 @@ else()
     endif()
 endif()
 
-target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network)
+set(OPENSSL_USE_STATIC_LIBS TRUE)
+find_package(OpenSSL REQUIRED)
+target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network OpenSSL::Crypto OpenSSL::SSL)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -119,11 +121,6 @@ set_target_properties(BB_Launcher PROPERTIES
     MACOSX_BUNDLE_ICON_FILE "BBIcon.icns"
 #   WIN32_EXECUTABLE TRUE
 )
-
-if (UNIX AND NOT APPLE)
-    find_package(OpenSSL REQUIRED)
-    target_link_libraries(BB_Launcher PRIVATE ${OPENSSL_LIBRARIES})
-endif()
 
 set_source_files_properties(images/BBIcon.icns PROPERTIES
         MACOSX_PACKAGE_LOCATION Resources)
